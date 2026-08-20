@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Phishing Detection Lab</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at top,
+                    #172554,
+                    #020617 60%
+                );
+
+            color: #e2e8f0;
+
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            text-align: center;
+            padding: 30px 10px;
+        }
+
+        header h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        .badge {
+            display: inline-block;
+
+            background: #172554;
+
+            border: 1px solid #2563eb;
+
+            color: #93c5fd;
+
+            padding: 8px 15px;
+
+            border-radius: 30px;
+
+            margin-bottom: 15px;
+
+            font-size: .85rem;
+        }
+
+
+        /* =========================
+           WARNING
+        ========================= */
+
+        .warning {
+            background: #422006;
+
+            border: 1px solid #f59e0b;
+
+            color: #fde68a;
+
+            padding: 15px;
+
+            border-radius: 10px;
+
+            text-align: center;
+
+            margin-bottom: 20px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =========================
+           STATS
+        ========================= */
+
+        .stats {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 12px;
+
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            background: #1e293b;
+
+            border: 1px solid #334155;
+
+            border-radius: 12px;
+
+            padding: 18px;
+
+            text-align: center;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+
+            font-size: .85rem;
+        }
+
+        .stat-value {
+            display: block;
+
+            font-size: 1.5rem;
+
+            font-weight: bold;
+
+            margin-top: 5px;
+
+            color: #60a5fa;
+        }
+
+
+        /* =========================
+           PROGRESS
+        ========================= */
+
+        .progress-container {
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 12px;
+
+            background: #020617;
+
+            border: 1px solid #334155;
+
+            border-radius: 20px;
+
+            overflow: hidden;
+        }
+
+        .progress {
+            width: 0%;
+
+            height: 100%;
+
+            background: #2563eb;
+
+            transition: width .3s;
+        }
+
+
+        /* =========================
+           EMAIL
+        ========================= */
+
+        .email-card {
+            background: #f8fafc;
+
+            color: #0f172a;
+
+            border-radius: 15px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 20px 40px
+                rgba(0, 0, 0, .3);
+
+            margin-bottom: 20px;
+        }
+
+        .email-header {
+            background: #e2e8f0;
+
+            padding: 20px;
+
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        .email-row {
+            margin-bottom: 8px;
+
+            word-break: break-word;
+        }
+
+        .email-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .email-label {
+            display: inline-block;
+
+            width: 75px;
+
+            color: #64748b;
+
+            font-weight: bold;
+        }
+
+        .email-body {
+            padding: 30px;
+
+            min-height: 260px;
+
+            line-height: 1.8;
+
+            font-size: 1rem;
+        }
+
+        .fake-link {
+            display: inline-block;
+
+            background: #2563eb;
+
+            color: white;
+
+            padding: 10px 18px;
+
+            border-radius: 6px;
+
+            margin: 15px 0;
+
+            text-decoration: none;
+
+            cursor: default;
+        }
+
+        .attachment {
+            display: inline-block;
+
+            background: #e2e8f0;
+
+            border: 1px solid #94a3b8;
+
+            padding: 10px 15px;
+
+            border-radius: 7px;
+
+            margin-top: 15px;
+        }
+
+
+        /* =========================
+           ANSWERS
+        ========================= */
+
+        .question {
+            text-align: center;
+
+            margin: 25px 0 15px;
+        }
+
+        .question h2 {
+            margin-bottom: 8px;
+        }
+
+        .question p {
+            color: #94a3b8;
+        }
+
+        .answers {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 15px;
+
+            margin-bottom: 20px;
+        }
+
+        .answer-btn {
+            padding: 18px;
+
+            border-radius: 12px;
+
+            border: 2px solid transparent;
+
+            font-size: 1.1rem;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: .2s;
+        }
+
+        .phishing-btn {
+            background: #450a0a;
+
+            color: #fca5a5;
+
+            border-color: #7f1d1d;
+        }
+
+        .phishing-btn:hover {
+            background: #7f1d1d;
+
+            color: white;
+        }
+
+        .legitimate-btn {
+            background: #052e16;
+
+            color: #86efac;
+
+            border-color: #166534;
+        }
+
+        .legitimate-btn:hover {
+            background: #166534;
+
+            color: white;
+        }
+
+
+        /* =========================
+           RESULT
+        ========================= */
+
+        .result {
+            display: none;
+
+            padding: 25px;
+
+            border-radius: 12px;
+
+            margin-bottom: 20px;
+
+            line-height: 1.7;
+        }
+
+        .correct {
+            background: #052e16;
+
+            border: 1px solid #16a34a;
+
+            color: #bbf7d0;
+        }
+
+        .incorrect {
+            background: #450a0a;
+
+            border: 1px solid #dc2626;
+
+            color: #fecaca;
+        }
+
+        .result h3 {
+            margin-bottom: 10px;
+        }
+
+        .red-flag {
+            padding: 8px 0;
+
+            border-bottom: 1px solid
+                rgba(255,255,255,.1);
+        }
+
+        .red-flag:last-child {
+            border-bottom: none;
+        }
+
+
+        /* =========================
+           BUTTONS
+        ========================= */
+
+        .controls {
+            text-align: center;
+
+            margin-bottom: 30px;
+        }
+
+        button.next {
+            background: #2563eb;
+
+            color: white;
+
+            border: none;
+
+            padding: 13px 25px;
+
+            border-radius: 8px;
+
+            font-size: 1rem;
+
+            cursor: pointer;
+        }
+
+        button.next:hover {
+            background: #1d4ed8;
+        }
+
+
+        /* =========================
+           EXPLANATION
+        ========================= */
+
+        .card {
+            background: #1e293b;
+
+            border: 1px solid #334155;
+
+            border-radius: 14px;
+
+            padding: 25px;
+
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            margin-bottom: 15px;
+        }
+
+        .card p {
+            color: #94a3b8;
+
+            line-height: 1.7;
+
+            margin-bottom: 10px;
+        }
+
+        .indicators {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 12px;
+
+            margin-top: 15px;
+        }
+
+        .indicator {
+            background: #0f172a;
+
+            border: 1px solid #334155;
+
+            padding: 15px;
+
+            border-radius: 10px;
+        }
+
+        .indicator strong {
+            color: #60a5fa;
+
+            display: block;
+
+            margin-bottom: 5px;
+        }
+
+
+        /* =========================
+           FINAL SCORE
+        ========================= */
+
+        .final {
+            display: none;
+
+            text-align: center;
+
+            background: #172554;
+
+            border: 1px solid #2563eb;
+
+            padding: 35px;
+
+            border-radius: 15px;
+
+            margin-bottom: 25px;
+        }
+
+        .final-score {
+            font-size: 3rem;
+
+            font-weight: bold;
+
+            color: #60a5fa;
+
+            margin: 15px 0;
+        }
+
+        .restart {
+            background: #2563eb;
+
+            color: white;
+
+            border: none;
+
+            padding: 13px 25px;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 1rem;
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            text-align: center;
+
+            color: #64748b;
+
+            padding: 25px;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media(max-width: 700px) {
+
+            .stats {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .answers {
+                grid-template-columns: 1fr;
+            }
+
+            .indicators {
+                grid-template-columns: 1fr;
+            }
+
+            .email-body {
+                padding: 20px;
+            }
+
+            .email-label {
+                width: 65px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- HEADER -->
+
+    <header>
+
+        <div class="badge">
+            🎣 CYBERSECURITY CLASSROOM LAB
+        </div>
+
+        <h1>
+            Phishing Detection Challenge
+        </h1>
+
+        <p>
+            Can you distinguish a legitimate message
+            from a phishing attempt?
+        </p>
+
+    </header>
+
+
+    <!-- WARNING -->
+
+    <div class="warning">
+
+        ⚠️ <strong>Educational Simulation</strong><br>
+
+        All emails displayed in this laboratory are
+        fictional examples created for cybersecurity
+        training. Do not interact with suspicious
+        messages outside authorized training environments.
+
+    </div>
+
+
+    <!-- STATS -->
+
+    <div class="stats">
+
+        <div class="stat">
+
+            <span class="stat-label">
+                Question
+            </span>
+
+            <span
+                id="questionNumber"
+                class="stat-value"
+            >
+                1 / 10
+            </span>
+
+        </div>
+
+
+        <div class="stat">
+
+            <span class="stat-label">
+                Score
+            </span>
+
+            <span
+                id="score"
+                class="stat-value"
+            >
+                0
+            </span>
+
+        </div>
+
+
+        <div class="stat">
+
+            <span class="stat-label">
+                Correct
+            </span>
+
+            <span
+                id="correct"
+                class="stat-value"
+            >
+                0
+            </span>
+
+        </div>
+
+
+        <div class="stat">
+
+            <span class="stat-label">
+                Accuracy
+            </span>
+
+            <span
+                id="accuracy"
+                class="stat-value"
+            >
+                0%
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- PROGRESS -->
+
+    <div class="progress-container">
+
+        <div class="progress-bar">
+
+            <div
+                id="progress"
+                class="progress"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- EMAIL -->
+
+    <div class="email-card">
+
+        <div class="email-header">
+
+            <div class="email-row">
+
+                <span class="email-label">
+                    From:
+                </span>
+
+                <span id="emailFrom"></span>
+
+            </div>
+
+
+            <div class="email-row">
+
+                <span class="email-label">
+                    To:
+                </span>
+
+                <span id="emailTo"></span>
+
+            </div>
+
+
+            <div class="email-row">
+
+                <span class="email-label">
+                    Subject:
+                </span>
+
+                <strong id="emailSubject"></strong>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="emailBody"
+            class="email-body"
+        ></div>
+
+    </div>
+
+
+    <!-- QUESTION -->
+
+    <div class="question">
+
+        <h2>
+            What do you think?
+        </h2>
+
+        <p>
+            Analyze the email carefully before choosing.
+        </p>
+
+    </div>
+
+
+    <!-- ANSWERS -->
+
+    <div class="answers">
+
+        <button
+            class="answer-btn phishing-btn"
+            onclick="answer('phishing')"
+        >
+            🎣 PHISHING
+        </button>
+
+
+        <button
+            class="answer-btn legitimate-btn"
+            onclick="answer('legitimate')"
+        >
+            ✅ LEGITIMATE
+        </button>
+
+    </div>
+
+
+    <!-- RESULT -->
+
+    <div
+        id="result"
+        class="result"
+    >
+
+        <h3 id="resultTitle"></h3>
+
+        <p id="resultExplanation"></p>
+
+        <div id="flags"></div>
+
+    </div>
+
+
+    <!-- NEXT -->
+
+    <div class="controls">
+
+        <button
+            id="nextButton"
+            class="next"
+            onclick="nextQuestion()"
+            style="display:none;"
+        >
+            Next Question →
+        </button>
+
+    </div>
+
+
+    <!-- FINAL -->
+
+    <div
+        id="final"
+        class="final"
+    >
+
+        <h2>
+            🎉 Challenge Complete!
+        </h2>
+
+        <div
+            id="finalScore"
+            class="final-score"
+        >
+            0 / 10
+        </div>
+
+        <p id="finalMessage"></p>
+
+        <br>
+
+        <button
+            class="restart"
+            onclick="restartQuiz()"
+        >
+            🔄 Try Again
+        </button>
+
+    </div>
+
+
+    <!-- LEARNING -->
+
+    <div class="card">
+
+        <h2>
+            🎓 What Should You Look For?
+        </h2>
+
+        <p>
+            Phishing messages often attempt to manipulate
+            users into revealing information or performing
+            an action.
+        </p>
+
+
+        <div class="indicators">
+
+            <div class="indicator">
+
+                <strong>👤 Sender</strong>
+
+                Check whether the sender's address
+                actually belongs to the organization.
+
+            </div>
+
+
+            <div class="indicator">
+
+                <strong>⚡ Urgency</strong>
+
+                Be suspicious of messages demanding
+                immediate action.
+
+            </div>
+
+
+            <div class="indicator">
+
+                <strong>🔗 Links</strong>
+
+                Examine where links actually lead before
+                interacting with them.
+
+            </div>
+
+
+            <div class="indicator">
+
+                <strong>📎 Attachments</strong>
+
+                Unexpected attachments can be dangerous.
+
+            </div>
+
+
+            <div class="indicator">
+
+                <strong>🔐 Credentials</strong>
+
+                Be cautious when a message requests
+                passwords or sensitive information.
+
+            </div>
+
+
+            <div class="indicator">
+
+                <strong>✍️ Language</strong>
+
+                Poor grammar, unusual wording, or
+                inconsistent branding can be warning signs.
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <footer>
+
+        🛡️ Cybersecurity Training Lab<br>
+
+        Phishing Detection Module • Educational Use Only
+
+    </footer>
+
+
+</div>
+
+
+
+<script>
+
+
+// =====================================================
+// PHISHING QUESTIONS
+// =====================================================
+
+const questions = [
+
+    {
+        from: "security@paypa1-alert.example",
+        to: "student@example.edu",
+        subject: "URGENT: Your account will be suspended",
+        body: `
+            <p>Hello Customer,</p>
+
+            <p>
+                We detected suspicious activity on your
+                account. Your account will be permanently
+                suspended within 24 hours.
+            </p>
+
+            <p>
+                Please verify your account immediately:
+            </p>
+
+            <span class="fake-link">
+                Verify My Account
+            </span>
+
+            <p>
+                Failure to verify your information will
+                result in permanent account suspension.
+            </p>
+
+            <p>Thank you,<br>Security Team</p>
+        `,
+        answer: "phishing",
+        explanation:
+            "This message uses urgency and fear to pressure the recipient into taking immediate action.",
+        flags: [
+            "The sender uses 'paypa1' instead of 'paypal'.",
+            "The message threatens account suspension.",
+            "It asks the recipient to verify an account through a link.",
+            "The message creates a strong sense of urgency."
+        ]
+    },
+
+
+    {
+        from: "registrar@strosecollege.edu",
+        to: "student@example.edu",
+        subject: "Final Examination Schedule",
+        body: `
+            <p>Hello Student,</p>
+
+            <p>
+                Please be reminded that the final
+                examination schedule is available through
+                the official student portal.
+            </p>
+
+            <p>
+                You may access the schedule through the
+                usual school portal.
+            </p>
+
+            <p>
+                If you have questions, please contact the
+                Registrar's Office.
+            </p>
+
+            <p>
+                Regards,<br>
+                Registrar's Office
+            </p>
+        `,
+        answer: "legitimate",
+        explanation:
+            "The message does not request credentials, payments, or unusual actions and directs students to their normal institutional portal.",
+        flags: [
+            "No suspicious attachment is included.",
+            "No unusual request for credentials is made.",
+            "The message does not use threatening language."
+        ]
+    },
+
+
+    {
+        from: "it-support@micros0ft-security.example",
+        to: "employee@example.com",
+        subject: "Your Microsoft password expires today",
+        body: `
+            <p>Dear User,</p>
+
+            <p>
+                Your Microsoft 365 password expires
+                TODAY.
+            </p>
+
+            <p>
+                You must confirm your account immediately
+                or your mailbox will be disabled.
+            </p>
+
+            <span class="fake-link">
+                Confirm Password
+            </span>
+
+            <p>
+                Microsoft IT Security
+            </p>
+        `,
+        answer: "phishing",
+        explanation:
+            "The message combines urgency with a request to confirm account information.",
+        flags: [
+            "The sender uses 'micros0ft' with a zero.",
+            "It threatens mailbox deactivation.",
+            "It asks the user to confirm a password.",
+            "It demands immediate action."
+        ]
+    },
+
+
+    {
+        from: "library@strosecollege.edu",
+        to: "student@example.edu",
+        subject: "Library orientation schedule",
+        body: `
+            <p>Hello Students,</p>
+
+            <p>
+                The library orientation for first-year
+                students will be held this Friday.
+            </p>
+
+            <p>
+                Please bring your student ID.
+            </p>
+
+            <p>
+                Thank you,<br>
+                College Library
+            </p>
+        `,
+        answer: "legitimate",
+        explanation:
+            "This is a routine informational message and does not request sensitive information.",
+        flags: [
+            "No password request.",
+            "No suspicious link.",
+            "No financial request.",
+            "No threatening language."
+        ]
+    },
+
+
+    {
+        from: "bank-alert@secure-banking.example",
+        to: "student@example.com",
+        subject: "Unusual transaction detected",
+        body: `
+            <p>Dear Customer,</p>
+
+            <p>
+                A transaction of ₱25,000 was detected
+                on your account.
+            </p>
+
+            <p>
+                If you did not authorize this transaction,
+                click below immediately.
+            </p>
+
+            <span class="fake-link">
+                Cancel Transaction
+            </span>
+
+            <p>
+                Failure to respond within 30 minutes
+                will make the transaction permanent.
+            </p>
+        `,
+        answer: "phishing",
+        explanation:
+            "The message uses fear, urgency, and a financial event to pressure the recipient into clicking.",
+        flags: [
+            "The sender address is not an identifiable official bank domain.",
+            "It creates panic using a large transaction.",
+            "It gives an extremely short deadline.",
+            "It asks the recipient to click a button."
+        ]
+    },
+
+
+    {
+        from: "professor@strosecollege.edu",
+        to: "student@example.edu",
+        subject: "Classroom announcement",
+        body: `
+            <p>Good afternoon, Students.</p>
+
+            <p>
+                Please remember that our next class will
+                begin at 8:00 AM.
+            </p>
+
+            <p>
+                Please bring your laboratory activity
+                and notebook.
+            </p>
+
+            <p>
+                See you in class.
+            </p>
+        `,
+        answer: "legitimate",
+        explanation:
+            "This is a normal classroom announcement and does not request sensitive information.",
+        flags: [
+            "No credential request.",
+            "No suspicious attachment.",
+            "No unusual payment request.",
+            "No suspicious urgency."
+        ]
+    },
+
+
+    {
+        from: "hr-payroll@company-benefits.example",
+        to: "employee@example.com",
+        subject: "Payroll verification required",
+        body: `
+            <p>Hello Employee,</p>
+
+            <p>
+                Due to a payroll system update, all
+                employees must submit their bank account
+                information today.
+            </p>
+
+            <span class="fake-link">
+                Update Payroll Information
+            </span>
+
+            <p>
+                Employees who fail to complete the form
+                may not receive their next salary.
+            </p>
+        `,
+        answer: "phishing",
+        explanation:
+            "The message requests sensitive financial information while using a threat involving salary.",
+        flags: [
+            "Requests bank account information.",
+            "Uses a salary-related threat.",
+            "Creates urgency.",
+            "The sender domain is not clearly an official company domain."
+        ]
+    },
+
+
+    {
+        from: "events@strosecollege.edu",
+        to: "student@example.edu",
+        subject: "Student Technology Seminar",
+        body: `
+            <p>Hello Students,</p>
+
+            <p>
+                The Computer Science Department will hold
+                a technology seminar next week.
+            </p>
+
+            <p>
+                Attendance is open to all interested
+                students.
+            </p>
+
+            <p>
+                Please see the department bulletin board
+                for the schedule.
+            </p>
+        `,
+        answer: "legitimate",
+        explanation:
+            "The message provides general information and does not request sensitive information.",
+        flags: [
+            "No credential request.",
+            "No suspicious attachment.",
+            "No financial request."
+        ]
+    },
+
+
+    {
+        from: "facebook-security@account-review.example",
+        to: "student@example.com",
+        subject: "Your account has violated our policy",
+        body: `
+            <p>Dear User,</p>
+
+            <p>
+                Your account has violated our community
+                standards.
+            </p>
+
+            <p>
+                Your account will be deleted unless you
+                appeal within the next 60 minutes.
+            </p>
+
+            <span class="fake-link">
+                Appeal Account
+            </span>
+
+            <p>
+                Please enter your password when requested.
+            </p>
+        `,
+        answer: "phishing",
+        explanation:
+            "The message creates fear and urgency and asks the recipient to enter a password.",
+        flags: [
+            "Threatens account deletion.",
+            "Uses a very short deadline.",
+            "Requests a password.",
+            "Sender domain is suspicious."
+        ]
+    }
+
+];
+
+
+// =====================================================
+// VARIABLES
+// =====================================================
+
+let currentQuestion = 0;
+
+let score = 0;
+
+let correctAnswers = 0;
+
+let answered = false;
+
+
+// =====================================================
+// LOAD QUESTION
+// =====================================================
+
+function loadQuestion() {
+
+    const q =
+        questions[currentQuestion];
+
+
+    document.getElementById(
+        "questionNumber"
+    ).textContent =
+        `${currentQuestion + 1} / ${questions.length}`;
+
+
+    document.getElementById(
+        "emailFrom"
+    ).textContent =
+        q.from;
+
+
+    document.getElementById(
+        "emailTo"
+    ).textContent =
+        q.to;
+
+
+    document.getElementById(
+        "emailSubject"
+    ).textContent =
+        q.subject;
+
+
+    document.getElementById(
+        "emailBody"
+    ).innerHTML =
+        q.body;
+
+
+    document.getElementById(
+        "progress"
+    ).style.width =
+        ((currentQuestion) /
+            questions.length * 100) + "%";
+
+
+    document.getElementById(
+        "result"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "nextButton"
+    ).style.display =
+        "none";
+
+
+    answered = false;
+
+}
+
+
+// =====================================================
+// ANSWER
+// =====================================================
+
+function answer(choice) {
+
+    if (answered) return;
+
+    answered = true;
+
+
+    const q =
+        questions[currentQuestion];
+
+
+    const result =
+        document.getElementById(
+            "result"
+        );
+
+
+    const title =
+        document.getElementById(
+            "resultTitle"
+        );
+
+
+    const explanation =
+        document.getElementById(
+            "resultExplanation"
+        );
+
+
+    const flags =
+        document.getElementById(
+            "flags"
+        );
+
+
+    result.style.display =
+        "block";
+
+
+    if (choice === q.answer) {
+
+        score += 10;
+
+        correctAnswers++;
+
+        result.className =
+            "result correct";
+
+        title.textContent =
+            "✅ Correct!";
+
+    } else {
+
+        result.className =
+            "result incorrect";
+
+        title.textContent =
+            "❌ Not quite.";
+
+    }
+
+
+    explanation.textContent =
+        q.explanation;
+
+
+    flags.innerHTML =
+        "<strong>🔎 Indicators:</strong><br>" +
+        q.flags.map(
+            flag =>
+                `<div class="red-flag">• ${flag}</div>`
+        ).join("");
+
+
+    document.getElementById(
+        "score"
+    ).textContent =
+        score;
+
+
+    document.getElementById(
+        "correct"
+    ).textContent =
+        correctAnswers;
+
+
+    const accuracy =
+        Math.round(
+            (correctAnswers /
+                (currentQuestion + 1)) * 100
+        );
+
+
+    document.getElementById(
+        "accuracy"
+    ).textContent =
+        accuracy + "%";
+
+
+    document.getElementById(
+        "nextButton"
+    ).style.display =
+        "inline-block";
+
+}
+
+
+// =====================================================
+// NEXT QUESTION
+// =====================================================
+
+function nextQuestion() {
+
+    currentQuestion++;
+
+
+    if (
+        currentQuestion >=
+        questions.length
+    ) {
+
+        showFinal();
+
+        return;
+
+    }
+
+
+    loadQuestion();
+
+}
+
+
+// =====================================================
+// FINAL RESULT
+// =====================================================
+
+function showFinal() {
+
+    document.querySelector(
+        ".email-card"
+    ).style.display =
+        "none";
+
+
+    document.querySelector(
+        ".question"
+    ).style.display =
+        "none";
+
+
+    document.querySelector(
+        ".answers"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "result"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "nextButton"
+    ).style.display =
+        "none";
+
+
+    document.querySelector(
+        ".progress-container"
+    ).style.display =
+        "none";
+
+
+    const final =
+        document.getElementById(
+            "final"
+        );
+
+
+    final.style.display =
+        "block";
+
+
+    document.getElementById(
+        "finalScore"
+    ).textContent =
+        `${score} / ${questions.length * 10}`;
+
+
+    let message;
+
+
+    const percentage =
+        (correctAnswers /
+            questions.length) * 100;
+
+
+    if (percentage >= 90) {
+
+        message =
+            "🏆 Excellent! You have a strong ability to identify phishing indicators.";
+
+    } else if (percentage >= 70) {
+
+        message =
+            "👍 Good job! Review the warning signs you missed.";
+
+    } else if (percentage >= 50) {
+
+        message =
+            "📚 Keep practicing. Pay close attention to sender addresses, urgency, and credential requests.";
+
+    } else {
+
+        message =
+            "⚠️ You should review common phishing indicators before attempting the challenge again.";
+
+    }
+
+
+    document.getElementById(
+        "finalMessage"
+    ).textContent =
+        message;
+
+}
+
+
+// =====================================================
+// RESTART
+// =====================================================
+
+function restartQuiz() {
+
+    currentQuestion = 0;
+
+    score = 0;
+
+    correctAnswers = 0;
+
+    document.getElementById(
+        "score"
+    ).textContent = "0";
+
+
+    document.getElementById(
+        "correct"
+    ).textContent = "0";
+
+
+    document.getElementById(
+        "accuracy"
+    ).textContent = "0%";
+
+
+    document.querySelector(
+        ".email-card"
+    ).style.display =
+        "block";
+
+
+    document.querySelector(
+        ".question"
+    ).style.display =
+        "block";
+
+
+    document.querySelector(
+        ".answers"
+    ).style.display =
+        "grid";
+
+
+    document.querySelector(
+        ".progress-container"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "final"
+    ).style.display =
+        "none";
+
+
+    loadQuestion();
+
+}
+
+
+// =====================================================
+// START
+// =====================================================
+
+loadQuestion();
+
+</script>
+
+</body>
+
+</html>
