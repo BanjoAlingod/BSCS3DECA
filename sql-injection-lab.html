@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SQL Injection Classroom Lab</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    body {
+        background: #0f172a;
+        color: #e2e8f0;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .container {
+        max-width: 1100px;
+        margin: auto;
+    }
+
+    header {
+        text-align: center;
+        padding: 25px 10px;
+    }
+
+    header h1 {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+    }
+
+    header p {
+        color: #94a3b8;
+    }
+
+    .warning {
+        background: #422006;
+        border: 1px solid #f59e0b;
+        color: #fcd34d;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 14px;
+        padding: 25px;
+        box-shadow: 0 10px 25px rgba(0,0,0,.2);
+    }
+
+    .full {
+        grid-column: 1 / -1;
+    }
+
+    h2 {
+        margin-bottom: 18px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 7px;
+        color: #cbd5e1;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        background: #020617;
+        color: white;
+        border: 1px solid #475569;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+
+    button {
+        border: none;
+        padding: 12px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        margin: 5px 5px 5px 0;
+        font-size: 1rem;
+    }
+
+    button:hover {
+        transform: translateY(-1px);
+    }
+
+    .primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .danger {
+        background: #dc2626;
+        color: white;
+    }
+
+    .success {
+        background: #16a34a;
+        color: white;
+    }
+
+    .secondary {
+        background: #475569;
+        color: white;
+    }
+
+    .mode-buttons {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .mode {
+        flex: 1;
+    }
+
+    .active {
+        outline: 3px solid #60a5fa;
+    }
+
+    .status {
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 8px;
+        display: none;
+    }
+
+    .success-box {
+        background: #052e16;
+        border: 1px solid #16a34a;
+        color: #86efac;
+    }
+
+    .danger-box {
+        background: #450a0a;
+        border: 1px solid #dc2626;
+        color: #fca5a5;
+    }
+
+    .info-box {
+        background: #172554;
+        border: 1px solid #2563eb;
+        color: #93c5fd;
+    }
+
+    .query {
+        background: #020617;
+        padding: 18px;
+        border-radius: 10px;
+        border: 1px solid #334155;
+        font-family: Consolas, monospace;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        line-height: 1.6;
+        margin-top: 10px;
+    }
+
+    .console {
+        background: #020617;
+        border: 1px solid #334155;
+        border-radius: 10px;
+        height: 250px;
+        overflow-y: auto;
+        padding: 15px;
+        font-family: Consolas, monospace;
+        font-size: .9rem;
+    }
+
+    .console-line {
+        margin-bottom: 7px;
+    }
+
+    .red {
+        color: #f87171;
+    }
+
+    .green {
+        color: #4ade80;
+    }
+
+    .yellow {
+        color: #facc15;
+    }
+
+    .blue {
+        color: #60a5fa;
+    }
+
+    .purple {
+        color: #c084fc;
+    }
+
+    .users {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    .users th,
+    .users td {
+        padding: 12px;
+        border-bottom: 1px solid #334155;
+        text-align: left;
+    }
+
+    .users th {
+        color: #93c5fd;
+    }
+
+    .lesson {
+        line-height: 1.7;
+        color: #cbd5e1;
+    }
+
+    .lesson strong {
+        color: white;
+    }
+
+    code {
+        background: #020617;
+        padding: 3px 6px;
+        border-radius: 4px;
+        color: #facc15;
+    }
+
+    footer {
+        text-align: center;
+        padding: 30px;
+        color: #64748b;
+    }
+
+    @media(max-width: 750px) {
+        .grid {
+            grid-template-columns: 1fr;
+        }
+
+        .full {
+            grid-column: auto;
+        }
+
+        header h1 {
+            font-size: 1.7rem;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>💉 SQL Injection Classroom Lab</h1>
+    <p>Learn how unsafe SQL queries can be manipulated</p>
+</header>
+
+<div class="warning">
+    ⚠️ <strong>Educational Simulation Only</strong><br>
+    This application uses a simulated database inside your browser.
+    It does not connect to a real database or attack a real website.
+</div>
+
+
+<div class="grid">
+
+    <!-- LOGIN -->
+    <div class="card">
+
+        <h2>🔐 Simulated Login</h2>
+
+        <label>Username</label>
+
+        <input
+            type="text"
+            id="username"
+            placeholder="Enter username"
+        >
+
+        <label>Password</label>
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Enter password"
+        >
+
+        <button
+            class="danger"
+            onclick="login()"
+        >
+            Login
+        </button>
+
+        <button
+            class="secondary"
+            onclick="clearForm()"
+        >
+            Clear
+        </button>
+
+        <div
+            id="result"
+            class="status"
+        ></div>
+
+    </div>
+
+
+    <!-- MODE -->
+    <div class="card">
+
+        <h2>⚙️ Security Mode</h2>
+
+        <div class="mode-buttons">
+
+            <button
+                id="vulnerableBtn"
+                class="danger mode active"
+                onclick="setMode('vulnerable')"
+            >
+                Vulnerable
+            </button>
+
+            <button
+                id="secureBtn"
+                class="success mode"
+                onclick="setMode('secure')"
+            >
+                Secure
+            </button>
+
+        </div>
+
+        <div
+            id="modeDescription"
+            class="status info-box"
+            style="display:block;"
+        >
+            <strong>Vulnerable Mode</strong><br>
+            The application demonstrates unsafe SQL
+            string construction.
+        </div>
+
+    </div>
+
+
+    <!-- GENERATED QUERY -->
+    <div class="card full">
+
+        <h2>🧪 Generated SQL Query</h2>
+
+        <div
+            id="query"
+            class="query"
+        >
+            No query generated yet.
+        </div>
+
+    </div>
+
+
+    <!-- CONSOLE -->
+    <div class="card full">
+
+        <h2>💻 Security Console</h2>
+
+        <div
+            id="console"
+            class="console"
+        >
+            <div class="console-line blue">
+                > SQL Injection Lab initialized.
+            </div>
+
+            <div class="console-line">
+                > Waiting for login attempt...
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- DATABASE -->
+    <div class="card full">
+
+        <h2>🗄️ Simulated Database</h2>
+
+        <table class="users">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Role</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>1</td>
+                    <td>alice</td>
+                    <td>apple123</td>
+                    <td>User</td>
+                </tr>
+
+                <tr>
+                    <td>2</td>
+                    <td>bob</td>
+                    <td>computer456</td>
+                    <td>User</td>
+                </tr>
+
+                <tr>
+                    <td>3</td>
+                    <td>admin</td>
+                    <td>admin789</td>
+                    <td>Administrator</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+        <p style="margin-top:15px;color:#94a3b8;">
+            This is fictional data created only for the demonstration.
+        </p>
+
+    </div>
+
+
+    <!-- LESSON -->
+    <div class="card full">
+
+        <h2>🎓 What Is SQL Injection?</h2>
+
+        <div class="lesson">
+
+            <p>
+                <strong>SQL Injection</strong> occurs when an application
+                places untrusted user input directly into an SQL statement
+                without properly separating data from SQL commands.
+            </p>
+
+            <br>
+
+            <p>
+                In this simulation, the vulnerable application constructs
+                a query using user-provided text.
+            </p>
+
+            <br>
+
+            <p>
+                The secure version demonstrates the principle of using
+                <strong>parameterized queries</strong> instead of treating
+                user input as part of the SQL command.
+            </p>
+
+            <br>
+
+            <p>
+                Try the demonstration input shown in the activity below,
+                then switch to <strong>Secure Mode</strong> and observe
+                the difference.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ACTIVITY -->
+    <div class="card full">
+
+        <h2>📝 Student Activity</h2>
+
+        <div class="lesson">
+
+            <p>
+                <strong>Task 1:</strong>
+                Log in using the normal credentials displayed
+                in the simulated database.
+            </p>
+
+            <br>
+
+            <p>
+                <strong>Task 2:</strong>
+                Experiment with specially crafted input in
+                <strong>Vulnerable Mode</strong>.
+            </p>
+
+            <br>
+
+            <p>
+                <strong>Task 3:</strong>
+                Observe the generated SQL query and explain
+                how the input changes the intended query logic.
+            </p>
+
+            <br>
+
+            <p>
+                <strong>Task 4:</strong>
+                Switch to <strong>Secure Mode</strong> and repeat
+                the experiment.
+            </p>
+
+            <br>
+
+            <p>
+                <strong>Question:</strong>
+                Why does parameterized SQL prevent the user input
+                from becoming part of the SQL command?
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<footer>
+    Cybersecurity Laboratory • SQL Injection Demonstration
+</footer>
+
+</div>
+
+
+<script>
+
+
+// ======================================================
+// SIMULATED DATABASE
+// ======================================================
+
+const users = [
+
+    {
+        username: "alice",
+        password: "apple123",
+        role: "User"
+    },
+
+    {
+        username: "bob",
+        password: "computer456",
+        role: "User"
+    },
+
+    {
+        username: "admin",
+        password: "admin789",
+        role: "Administrator"
+    }
+
+];
+
+
+// Current security mode
+
+let mode = "vulnerable";
+
+
+// ======================================================
+// CHANGE MODE
+// ======================================================
+
+function setMode(newMode) {
+
+    mode = newMode;
+
+    const vulnerableBtn =
+        document.getElementById("vulnerableBtn");
+
+    const secureBtn =
+        document.getElementById("secureBtn");
+
+    const description =
+        document.getElementById("modeDescription");
+
+
+    vulnerableBtn.classList.remove("active");
+    secureBtn.classList.remove("active");
+
+
+    if (mode === "vulnerable") {
+
+        vulnerableBtn.classList.add("active");
+
+        description.innerHTML =
+            "<strong>Vulnerable Mode</strong><br>" +
+            "The application demonstrates unsafe SQL " +
+            "string construction.";
+
+        log(
+            "Security mode changed to VULNERABLE.",
+            "red"
+        );
+
+    } else {
+
+        secureBtn.classList.add("active");
+
+        description.innerHTML =
+            "<strong>Secure Mode</strong><br>" +
+            "User input is treated as data instead of SQL code.";
+
+        log(
+            "Security mode changed to SECURE.",
+            "green"
+        );
+
+    }
+
+}
+
+
+// ======================================================
+// LOGIN
+// ======================================================
+
+function login() {
+
+    const username =
+        document.getElementById("username").value;
+
+    const password =
+        document.getElementById("password").value;
+
+
+    const result =
+        document.getElementById("result");
+
+    const query =
+        document.getElementById("query");
+
+
+    if (mode === "vulnerable") {
+
+        vulnerableLogin(
+            username,
+            password,
+            result,
+            query
+        );
+
+    } else {
+
+        secureLogin(
+            username,
+            password,
+            result,
+            query
+        );
+
+    }
+
+}
+
+
+// ======================================================
+// VULNERABLE LOGIN SIMULATION
+// ======================================================
+
+function vulnerableLogin(
+    username,
+    password,
+    result,
+    query
+) {
+
+
+    /*
+        IMPORTANT:
+
+        This does NOT execute SQL.
+
+        We only simulate what an unsafe application
+        might construct.
+    */
+
+
+    const generatedQuery =
+        "SELECT * FROM users WHERE " +
+        "username = '" +
+        username +
+        "' AND password = '" +
+        password +
+        "';";
+
+
+    query.textContent =
+        generatedQuery;
+
+
+    log(
+        "Generated unsafe SQL query.",
+        "red"
+    );
+
+
+    /*
+        Simulate the classic boolean condition.
+
+        The purpose is to demonstrate the concept,
+        not to connect to a database.
+    */
+
+
+    const injection =
+        username.includes("' OR '1'='1") ||
+        username.includes("' OR 1=1") ||
+        password.includes("' OR '1'='1") ||
+        password.includes("' OR 1=1");
+
+
+    if (injection) {
+
+        result.style.display = "block";
+
+        result.className =
+            "status danger-box";
+
+        result.innerHTML =
+            "<strong>⚠️ SQL Injection Simulated!</strong><br>" +
+            "The crafted input changed the intended " +
+            "authentication logic.";
+
+        log(
+            "Possible injection pattern detected.",
+            "red"
+        );
+
+        log(
+            "Authentication bypass simulated.",
+            "yellow"
+        );
+
+        return;
+    }
+
+
+    const user =
+        users.find(
+            u =>
+                u.username === username &&
+                u.password === password
+        );
+
+
+    if (user) {
+
+        result.style.display = "block";
+
+        result.className =
+            "status success-box";
+
+        result.innerHTML =
+            "<strong>Login successful!</strong><br>" +
+            "Welcome, " +
+            escapeHTML(user.username) +
+            ".<br>" +
+            "Role: " +
+            escapeHTML(user.role);
+
+        log(
+            "Valid credentials supplied.",
+            "green"
+        );
+
+    } else {
+
+        result.style.display = "block";
+
+        result.className =
+            "status danger-box";
+
+        result.innerHTML =
+            "<strong>Login failed.</strong><br>" +
+            "Invalid username or password.";
+
+        log(
+            "Authentication failed.",
+            "red"
+        );
+
+    }
+
+}
+
+
+// ======================================================
+// SECURE LOGIN SIMULATION
+// ======================================================
+
+function secureLogin(
+    username,
+    password,
+    result,
+    query
+) {
+
+
+    /*
+        In a real application this would use something like:
+
+        SELECT * FROM users
+        WHERE username = ?
+        AND password = ?
+
+        The values would be supplied separately
+        as parameters.
+
+        Here we only demonstrate the concept.
+    */
+
+
+    query.textContent =
+        "SELECT * FROM users " +
+        "WHERE username = ? " +
+        "AND password = ?;\n\n" +
+
+        "Parameters:\n" +
+        "  1. username = " +
+        username +
+        "\n" +
+        "  2. password = " +
+        password;
+
+
+    log(
+        "Parameterized query simulated.",
+        "green"
+    );
+
+
+    const user =
+        users.find(
+            u =>
+                u.username === username &&
+                u.password === password
+        );
+
+
+    if (user) {
+
+        result.style.display = "block";
+
+        result.className =
+            "status success-box";
+
+        result.innerHTML =
+            "<strong>Login successful!</strong><br>" +
+            "Welcome, " +
+            escapeHTML(user.username) +
+            ".<br>" +
+            "Role: " +
+            escapeHTML(user.role);
+
+        log(
+            "Credentials matched database record.",
+            "green"
+        );
+
+    } else {
+
+        result.style.display = "block";
+
+        result.className =
+            "status danger-box";
+
+        result.innerHTML =
+            "<strong>Login failed.</strong><br>" +
+            "The input was treated as data.";
+
+        log(
+            "Input did not become part of the SQL command.",
+            "blue"
+        );
+
+    }
+
+}
+
+
+// ======================================================
+// CLEAR FORM
+// ======================================================
+
+function clearForm() {
+
+    document.getElementById("username").value = "";
+
+    document.getElementById("password").value = "";
+
+    document.getElementById("result").style.display =
+        "none";
+
+    document.getElementById("query").textContent =
+        "No query generated yet.";
+
+}
+
+
+// ======================================================
+// CONSOLE
+// ======================================================
+
+function log(message, className = "") {
+
+    const consoleBox =
+        document.getElementById("console");
+
+    const line =
+        document.createElement("div");
+
+    line.className =
+        "console-line " + className;
+
+    line.textContent =
+        "> " + message;
+
+    consoleBox.appendChild(line);
+
+    consoleBox.scrollTop =
+        consoleBox.scrollHeight;
+
+}
+
+
+// ======================================================
+// BASIC HTML ESCAPING
+// ======================================================
+
+function escapeHTML(value) {
+
+    return value
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+}
+
+</script>
+
+</body>
+</html>
