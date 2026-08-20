@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Cybersecurity Training Lab</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    circle at top,
+                    #172554,
+                    #020617 55%
+                );
+
+            color: #e2e8f0;
+        }
+
+        /* ==============================
+           NAVIGATION
+        ============================== */
+
+        nav {
+            width: 100%;
+            padding: 20px 7%;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            border-bottom: 1px solid #1e293b;
+
+            background: rgba(2, 6, 23, .8);
+            backdrop-filter: blur(10px);
+
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #60a5fa;
+        }
+
+        nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin-left: 25px;
+        }
+
+        nav a:hover {
+            color: white;
+        }
+
+
+        /* ==============================
+           HERO
+        ============================== */
+
+        .hero {
+            min-height: 65vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            text-align: center;
+
+            padding: 70px 20px;
+        }
+
+        .hero-content {
+            max-width: 850px;
+        }
+
+        .badge {
+            display: inline-block;
+
+            padding: 8px 15px;
+
+            border-radius: 30px;
+
+            background: #172554;
+            border: 1px solid #2563eb;
+
+            color: #93c5fd;
+
+            margin-bottom: 20px;
+        }
+
+        .hero h1 {
+            font-size: clamp(
+                2.5rem,
+                7vw,
+                5rem
+            );
+
+            margin-bottom: 20px;
+
+            line-height: 1.05;
+        }
+
+        .hero h1 span {
+            color: #60a5fa;
+        }
+
+        .hero p {
+            color: #94a3b8;
+            font-size: 1.15rem;
+            line-height: 1.7;
+        }
+
+        .hero-buttons {
+            margin-top: 30px;
+        }
+
+        .btn {
+            display: inline-block;
+
+            padding: 13px 25px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            margin: 5px;
+
+            transition: .2s;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            border: 1px solid #475569;
+            color: #cbd5e1;
+        }
+
+        .btn-secondary:hover {
+            background: #1e293b;
+        }
+
+
+        /* ==============================
+           LAB SECTION
+        ============================== */
+
+        .section {
+            max-width: 1100px;
+
+            margin: auto;
+
+            padding: 60px 20px;
+        }
+
+        .section-title {
+            text-align: center;
+
+            margin-bottom: 40px;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .section-title p {
+            color: #64748b;
+        }
+
+
+        /* ==============================
+           ATTACK CARDS
+        ============================== */
+
+        .cards {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 25px;
+        }
+
+        .card {
+            position: relative;
+
+            background: rgba(15, 23, 42, .85);
+
+            border: 1px solid #334155;
+
+            border-radius: 18px;
+
+            padding: 30px;
+
+            transition: .25s;
+
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: 0;
+
+            width: 100%;
+            height: 4px;
+
+            background: #2563eb;
+        }
+
+        .card:hover {
+            transform: translateY(-7px);
+
+            border-color: #3b82f6;
+
+            box-shadow:
+                0 20px 40px
+                rgba(0, 0, 0, .3);
+        }
+
+        .icon {
+            width: 65px;
+            height: 65px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            border-radius: 15px;
+
+            background: #172554;
+
+            font-size: 2rem;
+
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            color: #94a3b8;
+
+            line-height: 1.7;
+
+            margin-bottom: 20px;
+        }
+
+        .tags {
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            display: inline-block;
+
+            background: #0f172a;
+
+            border: 1px solid #334155;
+
+            color: #93c5fd;
+
+            padding: 5px 9px;
+
+            border-radius: 20px;
+
+            font-size: .8rem;
+
+            margin: 3px;
+        }
+
+        .launch {
+            display: inline-block;
+
+            padding: 11px 18px;
+
+            background: #2563eb;
+
+            color: white;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            transition: .2s;
+        }
+
+        .launch:hover {
+            background: #1d4ed8;
+        }
+
+
+        /* ==============================
+           LEARNING SECTION
+        ============================== */
+
+        .learning {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 20px;
+        }
+
+        .learning-card {
+            background: #0f172a;
+
+            border: 1px solid #1e293b;
+
+            border-radius: 12px;
+
+            padding: 25px;
+
+            text-align: center;
+        }
+
+        .learning-card .number {
+            font-size: 2rem;
+
+            font-weight: bold;
+
+            color: #60a5fa;
+
+            margin-bottom: 10px;
+        }
+
+        .learning-card h3 {
+            margin-bottom: 10px;
+        }
+
+        .learning-card p {
+            color: #94a3b8;
+
+            line-height: 1.6;
+        }
+
+
+        /* ==============================
+           SAFETY
+        ============================== */
+
+        .safety {
+            margin-top: 40px;
+
+            padding: 25px;
+
+            border-radius: 12px;
+
+            background: #422006;
+
+            border: 1px solid #92400e;
+
+            color: #fde68a;
+
+            line-height: 1.7;
+
+            text-align: center;
+        }
+
+
+        /* ==============================
+           FOOTER
+        ============================== */
+
+        footer {
+            margin-top: 60px;
+
+            padding: 30px 20px;
+
+            border-top: 1px solid #1e293b;
+
+            text-align: center;
+
+            color: #64748b;
+        }
+
+
+        /* ==============================
+           MOBILE
+        ============================== */
+
+        @media(max-width: 750px) {
+
+            nav {
+                padding: 18px 20px;
+            }
+
+            nav .links {
+                display: none;
+            }
+
+            .hero {
+                min-height: 70vh;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .learning {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ==============================
+     NAVIGATION
+============================== -->
+
+<nav>
+
+    <div class="logo">
+        🛡️ Cyber Lab
+    </div>
+
+    <div class="links">
+
+        <a href="#home">
+            Home
+        </a>
+
+        <a href="#attacks">
+            Attack Labs
+        </a>
+
+        <a href="#learning">
+            Learning
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<!-- ==============================
+     HERO
+============================== -->
+
+<section
+    class="hero"
+    id="home"
+>
+
+    <div class="hero-content">
+
+        <div class="badge">
+            🔒 CYBERSECURITY CLASSROOM LAB
+        </div>
+
+        <h1>
+            Learn Cybersecurity
+            <span>Through Simulation</span>
+        </h1>
+
+        <p>
+            Explore common cybersecurity attack techniques
+            through safe, interactive simulations designed
+            for classroom learning.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a
+                href="#attacks"
+                class="btn btn-primary"
+            >
+                Explore Attack Labs
+            </a>
+
+            <a
+                href="#learning"
+                class="btn btn-secondary"
+            >
+                Learning Objectives
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ==============================
+     ATTACK LABS
+============================== -->
+
+<section
+    class="section"
+    id="attacks"
+>
+
+    <div class="section-title">
+
+        <h2>
+            🧪 Attack Simulation Labs
+        </h2>
+
+        <p>
+            Select a laboratory to begin the simulation.
+        </p>
+
+    </div>
+
+
+    <div class="cards">
+
+
+        <!-- BRUTE FORCE -->
+
+        <div class="card">
+
+            <div class="icon">
+                🔐
+            </div>
+
+            <h3>
+                Brute-Force Attack
+            </h3>
+
+            <p>
+                Learn how an attacker can systematically
+                try different password combinations until
+                the correct password is discovered.
+            </p>
+
+            <div class="tags">
+
+                <span class="tag">
+                    Password Security
+                </span>
+
+                <span class="tag">
+                    Authentication
+                </span>
+
+                <span class="tag">
+                    Brute Force
+                </span>
+
+            </div>
+
+            <a
+                href="brute-force.html"
+                class="launch"
+            >
+                Launch Simulator →
+            </a>
+
+        </div>
+
+
+
+        <!-- SQL INJECTION -->
+
+        <div class="card">
+
+            <div class="icon">
+                💉
+            </div>
+
+            <h3>
+                SQL Injection
+            </h3>
+
+            <p>
+                Explore how improperly handled user input
+                can change the intended logic of an SQL
+                query and how parameterized queries help
+                prevent the vulnerability.
+            </p>
+
+            <div class="tags">
+
+                <span class="tag">
+                    Web Security
+                </span>
+
+                <span class="tag">
+                    SQL
+                </span>
+
+                <span class="tag">
+                    Input Validation
+                </span>
+
+            </div>
+
+            <a
+                href="sql-injection.html"
+                class="launch"
+            >
+                Launch SQL Lab →
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="safety">
+
+        ⚠️ <strong>Important:</strong>
+        These laboratories are simulations intended
+        for educational purposes. Do not use attack
+        techniques against systems, accounts, or
+        websites without explicit authorization.
+
+    </div>
+
+</section>
+
+
+
+<!-- ==============================
+     LEARNING
+============================== -->
+
+<section
+    class="section"
+    id="learning"
+>
+
+    <div class="section-title">
+
+        <h2>
+            🎓 Learning Objectives
+        </h2>
+
+        <p>
+            After completing the activities, students
+            should understand the following concepts.
+        </p>
+
+    </div>
+
+
+    <div class="learning">
+
+
+        <div class="learning-card">
+
+            <div class="number">
+                01
+            </div>
+
+            <h3>
+                Understand Attacks
+            </h3>
+
+            <p>
+                Identify how brute-force attacks and
+                SQL injection work conceptually.
+            </p>
+
+        </div>
+
+
+        <div class="learning-card">
+
+            <div class="number">
+                02
+            </div>
+
+            <h3>
+                Identify Weaknesses
+            </h3>
+
+            <p>
+                Recognize weaknesses in authentication
+                and poorly designed web applications.
+            </p>
+
+        </div>
+
+
+        <div class="learning-card">
+
+            <div class="number">
+                03
+            </div>
+
+            <h3>
+                Apply Defenses
+            </h3>
+
+            <p>
+                Understand techniques such as
+                rate limiting, account lockout,
+                input handling, and parameterized queries.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ==============================
+     FOOTER
+============================== -->
+
+<footer>
+
+    <p>
+        🛡️ Cybersecurity Training Lab
+    </p>
+
+    <p style="margin-top:8px;">
+        Classroom Simulation • Educational Use Only
+    </p>
+
+</footer>
+
+
+</body>
+
+</html>
